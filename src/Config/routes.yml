@@ -1,0 +1,10 @@
+routes:
+  /:
+    controller: Weather
+    method: GET
+    function: fetch
+  weather:
+    controller: Weather
+    method: GET
+    function: fetch
+

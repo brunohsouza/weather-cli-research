@@ -1,0 +1,21 @@
+{
+    "name": "brunosouza/weather-api",
+    "description": "API to describe the local weather",
+    "type": "project",
+    "require": {
+        "symfony/console": "^4.2",
+        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/command": "^1.0"
+    },
+    "authors": [
+        {
+            "name": "Bruno Souza",
+            "email": "brunobachus@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Weather\\": "src/"
+        }
+    }
+}
