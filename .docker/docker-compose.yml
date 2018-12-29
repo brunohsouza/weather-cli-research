@@ -1,0 +1,66 @@
+#version: '3'
+#
+#services:
+#  php-apache:
+#    build: .
+#    ports:
+#      - 8002:8002
+#    volumes:
+#      - .:/var/www/html/weather-api
+#    links:
+#      - elasticsearch
+#
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.4
+#    container_name: elasticsearch
+#    environment:
+#      - cluster.name=docker-cluster
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    ports:
+#      - 9200:9200
+
+version: "3.2"
+services:
+  php:
+    build: './php/'
+    networks:
+    - backend
+    volumes:
+    - /var/www/html/weather-api/:/var/www/html/weather-api/
+  apache:
+    build: './apache/'
+    depends_on:
+      - php
+      - elasticsearch
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "8080:80"
+    volumes:
+      - /var/www/html/weather-api/:/var/www/html/weather-api/
+  elasticsearch:
+      image: docker.elastic.co/elasticsearch/elasticsearch:6.5.4
+      container_name: elasticsearch
+      environment:
+        - cluster.name=docker-cluster
+        - bootstrap.memory_lock=true
+        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      ports:
+        - 9201:9200
+      networks:
+        - backend
+networks:
+  frontend:
+  backend:
+
+

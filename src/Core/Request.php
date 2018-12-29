@@ -22,23 +22,27 @@ class Request implements \Weather\Core\IRequest
 
     private $params;
 
-    private $request;
-
     /**
      * Request constructor.
      * @throws \Exception
      */
-    function __construct()
+    public function __construct()
     {
         // get the HTTP method passed inside the request
         $this->method = $_SERVER['REQUEST_METHOD'];
 
         // get the path passed inside the request
-        $this->request = explode('/', $_REQUEST['path']);
-        $this->path = $this->request[0];
-        $this->handlerRequest();
+        $requestUri = explode('/', $_SERVER['REQUEST_URI']);
+        $this->setPath($requestUri);
+
+        //set the parameters from request
+        $this->setId($requestUri);
+        $this->setParams($requestUri);
     }
 
+    /**
+     * @return array
+     */
     public function getBody()
     {
         $result = [];
@@ -48,56 +52,57 @@ class Request implements \Weather\Core\IRequest
         return $result;
     }
 
-    public function getQuery()
-    {
-        $result = [];
-        foreach ($_GET as $key => $value) {
-            $result[$key] = filter_input_array(INPUT_GET, $key, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        }
-        return $result;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function handlerRequest()
-    {
-        if ($this->method === 'POST' || $this->method === 'PUT') {
-            $this->params = $this->getBody();
-        }
-
-        if ($this->method === 'GET' || $this->method === 'DELETE')
-        {
-            $this->params = $this->getQuery();
-        }
-    }
-
     /**
      * @return mixed
      * @throws \Exception
      */
-    public function getId()
+    public function setId($request)
     {
-        if (is_int($this->request[1])) {
-            return $this->id = $this->request[1];
-        }
+        $this->id = $request[3] ?? null;
     }
 
+    /**
+     * @return mixed
+     */
     public function getMethod()
     {
         return $this->method;
     }
 
-    public function getPath()
+    public function setPath($path)
+    {
+        $this->path = $path[1] ?? 'weather';
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath() :string
     {
         return $this->path;
     }
 
-    public function getParams()
+    /**
+     * @param $request
+     */
+    public function setParams($request)
     {
-        $this->request['id'] = $this->getId();
-        return $this->request;
+        $this->params = new \stdClass();
+        if ($this->method === 'POST' || $this->method === 'PUT') {
+            $content = $this->getBody();
+        }
+        if (is_string($request[2])) {
+            $this->params->query = $request[2];
+        }
+        $this->params->id = $this->id;
+        $this->params->content = $content ?? null;
     }
 
-
+    /**
+     * @return mixed
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
 }

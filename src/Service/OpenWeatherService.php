@@ -8,35 +8,65 @@
 
 namespace Weather\Service;
 
-
 use GuzzleHttp\Client;
+use JsonMachine\JsonMachine;
 
 class OpenWeatherService
 {
 
+    const API_KEY = '6723df6a02149f85e517ad8d4836c748';
+
+    /**
+     * @var \GuzzleHttp\Client
+     */
     private $client;
 
     public function __construct()
     {
         $this->client = new Client([
-            'base_uri' => 'https://openweathermap.org/api',
-            'timeout' => 2.0,
-            'key' => '6723df6a02149f85e517ad8d4836c748'
+            'base_uri' => 'http://samples.openweathermap.org',
+            'timeout' => 5.0
         ]);
     }
 
-    public function getWeatherByCity($cityName)
+    public function getWeatherByCity($params)
     {
-        $this->getCityId($cityName);
-        $params = 'q=' . strtolower($cityName);
-//        var_dump($this->client->request('GET', $params));die;
+        if (isset($params->query)) {
+            $arrLocalCity = $this->getCityData($params->query);
+        }
+        $this->getWeatherFromApi(current($arrLocalCity));
     }
 
-    public function getCityId($cityName)
+    public function getCityData($cityName)
     {
-        if (file_exists('data/city.list.json')) {
-            $jsonCity = json_decode(file_get_contents('data/city.list.json'));
-            var_dump($jsonCity);die;
+        $cityName = $this->treatCityName($cityName);
+        $arrLocalCity = [];
+        $jsonFile = 'data/city.list.json';
+        if (file_exists($jsonFile)) {
+            $jsonStream = JsonMachine::fromFile($jsonFile);
+            foreach ($jsonStream as $city) {
+                if (strtolower($city['name']) === strtolower($cityName)) {
+                    $arrLocalCity = $city;
+                }
+            }
         }
+        return $arrLocalCity;
+    }
+
+    public function getWeatherFromApi($cityId)
+    {
+        $arrQuery = [
+            'query' => [
+                'id' => $cityId,
+                'appid' => self::API_KEY
+            ]
+        ];
+        $response = $this->client->request('GET', '/data/2.5/forecast', $arrQuery);
+        return json_decode($response->getBody());
+    }
+
+    public function treatCityName(string $cityName)
+    {
+        return urldecode(strtolower($cityName));
     }
 }

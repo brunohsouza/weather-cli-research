@@ -23,19 +23,20 @@ class Router
     }
 
     /**
-     * @param $name
+     * @param $method
      * @param $arguments
+     * @return \Exception
      * @throws \Exception
      */
     public function __call($name, $arguments)
     {
         try {
             $this->verityMethod($name);
-            list($route, $method) = $arguments;
+            $route = $arguments[0];
             $this->route = $this->formatRoute($route);
-            $this->run($arguments);
+            $this->run();
         } catch (\Error $exception) {
-            return new \HttpMessage($exception->getMessage());
+            return new \Exception($exception->getMessage());
         }
     }
 
@@ -55,26 +56,25 @@ class Router
     public function run()
     {
         $routeConfig = $this->getRouteConfig();
-
         foreach ($routeConfig['routes'] as $key => $value) {
             if ($key === $this->route) {
                 $class = "Weather\\Controller\\" . ucfirst($value['controller']) . "Controller";
                 if ($value['method'] === $this->request->getMethod()) {
-                    $function = $value['function'];
+                    $action = $value['function'];
                 }
             }
         }
-        if (!isset($class) || !isset($function)) {
+        if (!isset($class) || !isset($action)) {
             throw new \Exception('Not Found', 404);
         }
         $controller = new $class();
-        return $controller->$function($this->request->getParams());
+        return $controller->$action($this->request->getParams());
     }
 
     public function getRouteConfig()
     {
-        if (file_exists('src/Config/routes.yml')) {
-            return yaml_parse(file_get_contents('src/Config/routes.yml'));
+        if (file_exists('src/Config/routes.json')) {
+            return json_decode(file_get_contents('src/Config/routes.json'), true);
         }
     }
 
@@ -82,12 +82,11 @@ class Router
      * @param $method
      * @throws \Exception
      */
-    public function verityMethod($method)
+    public function verityMethod($method) :void
     {
         if (!in_array(strtoupper($method), $this->httpMethods)) {
             throw new \Exception('Method not available');
         }
-
     }
 
 }
