@@ -34,7 +34,7 @@ class Router
             $this->verityMethod($name);
             $route = $arguments[0];
             $this->route = $this->formatRoute($route);
-            $this->run();
+            return $this->run();
         } catch (\Error $exception) {
             return new \Exception($exception->getMessage());
         }

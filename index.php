@@ -6,13 +6,17 @@
  * Time: 17:54
  */
 
-include_once 'src/Core/Request.php';
-include_once 'src/Core/Router.php';
 require __DIR__ . '/vendor/autoload.php';
 
-$request = new \Weather\Core\Request();
-$router = new \Weather\Core\Router($request);
+use Weather\Core\Request;
+use Weather\Core\Router;
 
-$router->{$request->getMethod()}($request->getPath(), $request);
+try {
+    $request = new Request();
+    $router = new Router($request);
+    print(json_encode($router->{$request->getMethod()}($request->getPath(), $request)));
+} catch (\Exception $exception) {
+    return print(json_encode([$exception->getMessage(), $exception->getCode()]));
+}
 
 
