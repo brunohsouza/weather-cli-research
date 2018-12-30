@@ -54,17 +54,22 @@ class WeatherController extends Command
 
             $weatherData = $this->openWeatherService->getWeatherByCity($this->prepareParams($cityNameAnswer));
 
-            $output->writeln(
-                ucfirst($weatherData->overall->desc) . ', ' .
-                ' Temperature in ' . $weatherData->temp->realtime . ' degrees Celsius'
-            );
-
-            $output->writeln('Minimum Temperature Forecast: ' . $weatherData->temp->min);
-            $output->writeln('Maximum Temperature Forecast: ' . $weatherData->temp->max);
-            $output->writeln('Relative humidity: ' . $weatherData->overall->humidity);
+            $this->showsOutput($weatherData);
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
+    }
+    
+    public function showsOutput($weatherData)
+    {
+        $this->output->writeln(
+            ucfirst($weatherData->overall->desc) . ', ' .
+            ' Temperature in ' . $weatherData->temp->realtime . ' degrees Celsius'
+        );
+
+        $this->output->writeln('Minimum Temperature Forecast: ' . $weatherData->temp->min . ' degrees Celsius');
+        $this->output->writeln('Maximum Temperature Forecast: ' . $weatherData->temp->max . ' degrees Celsius');
+        $this->output->writeln('Relative humidity: ' . $weatherData->overall->humidity . '%');
     }
 
     public function prepareParams($cityName)
@@ -73,6 +78,7 @@ class WeatherController extends Command
         $params->query = $cityName;
         return $params;
     }
+       
 
     /**
      * @param $params
