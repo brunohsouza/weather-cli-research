@@ -8,22 +8,50 @@
 
 namespace Weather\Core;
 
+/**
+ * Class Router
+ * This class is responsible to manage the routes passed inside requests
+ * @package Weather\Core
+ */
 class Router
 {
+    /**
+     * Request service
+     * @var Request
+     */
     private $request;
 
+    /**
+     * Array that stores the available method that can be used in this app
+     * @var array
+     */
     private $httpMethods = ['GET', 'POST', 'PUT', 'DELETE'];
 
+    /**
+     * Route passed inside the request
+     * @var string
+     */
     private $route;
 
+    /**
+     * Application name
+     * @var string
+     */
+    private $appName;
 
+
+    /**
+     * Router constructor.
+     * @param Request $request
+     */
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
     /**
-     * @param $method
+     * Method responsible to get all callable functions request and manage this
+     * @param $name
      * @param $arguments
      * @return \Exception
      * @throws \Exception
@@ -40,7 +68,12 @@ class Router
         }
     }
 
-    private function formatRoute($route)
+    /**
+     * Gets the route passed in the uri
+     * @param $route
+     * @return string
+     */
+    private function formatRoute($route) :string
     {
         $result = rtrim($route, '/');
         if ($result === '') {
@@ -50,6 +83,7 @@ class Router
     }
 
     /**
+     * Method responsible to get the controller class and function to carry on the request
      * @return mixed
      * @throws \Exception
      */
@@ -58,7 +92,8 @@ class Router
         $routeConfig = $this->getRouteConfig();
         foreach ($routeConfig['routes'] as $key => $value) {
             if ($key === $this->route) {
-                $class = "Weather\\Controller\\" . ucfirst($value['controller']) . "Controller";
+                $this->getAppName();
+                $class = $this->appName . "\\Controller\\" . ucfirst($value['controller']) . 'Controller';
                 if ($value['method'] === $this->request->getMethod()) {
                     $action = $value['function'];
                 }
@@ -71,6 +106,10 @@ class Router
         return $controller->$action($this->request->getParams());
     }
 
+    /**
+     * Gets the config from route config file
+     * @return mixed
+     */
     public function getRouteConfig()
     {
         if (file_exists('src/Config/routes.json')) {
@@ -79,14 +118,24 @@ class Router
     }
 
     /**
+     * Verifies if the http method is valid
      * @param $method
      * @throws \Exception
      */
     public function verityMethod($method) :void
     {
-        if (!in_array(strtoupper($method), $this->httpMethods)) {
+        if (!in_array(strtoupper($method), $this->httpMethods, true)) {
             throw new \Exception('Method not available');
         }
+    }
+
+    /**
+     * Gets the application's name inside the namespace
+     */
+    public function getAppName() :void
+    {
+        $namespace = explode('\\', __NAMESPACE__);
+        $this->appName = $namespace[0];
     }
 
 }

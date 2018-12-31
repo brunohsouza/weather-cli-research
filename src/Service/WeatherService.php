@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: brunosouza
- * Date: 26/12/18
- * Time: 01:00
- */
 
 namespace Weather\Service;
 
@@ -13,16 +7,16 @@ use JsonMachine\JsonMachine;
 use Weather\Service\TemperatureService;
 
 /**
- * Class OpenWeatherService
+ * Class WeatherService
  * @package Weather\Service
  */
-class OpenWeatherService
+class WeatherService
 {
 
     /**
      * Key necessary to consume the OpenWeatherAPI
      */
-    const API_KEY = '6723df6a02149f85e517ad8d4836c748';
+    private const API_KEY = '6723df6a02149f85e517ad8d4836c748';
 
     /**
      * Service to get and treat the temperature as Celsius
@@ -37,12 +31,12 @@ class OpenWeatherService
     private $client;
 
     /**
-     * OpenWeatherService constructor.
+     * WeatherService constructor.
      */
     public function __construct()
     {
         $this->client = new Client([
-            'base_uri' => 'http://samples.openweathermap.org',
+            'base_uri' => 'http://api.openweathermap.org',
             'timeout' => 5.0
         ]);
         $this->tempService = new TemperatureService();
@@ -58,10 +52,10 @@ class OpenWeatherService
     public function getWeatherByCity($params) : \stdClass
     {
         $weather =  new \stdClass();
-        if (isset($params->query)) {
+        if (isset($params->query) && !empty($params->query)) {
             $arrLocalCity = $this->getCityData($params->query);
             $weatherData = $this->getWeatherFromApi(current($arrLocalCity));
-            $weather->temp = $this->tempService->getTempFahrenheit($weatherData);
+            $weather->temp = $this->tempService->getTemperature($weatherData);
             $weather->overall = $this->getOverAll($weatherData);
             return $weather;
         }
@@ -74,21 +68,25 @@ class OpenWeatherService
      * This method makes a parse from this file and return am array within given city information
      * @param $cityName
      * @return array|mixed
+     * @throws \Exception
      */
     public function getCityData($cityName) :array
     {
-        $cityName = $this->treatCityName($cityName);
-        $arrLocalCity = [];
-        $jsonFile = 'data/city.list.json';
-        if (file_exists($jsonFile)) {
-            $jsonStream = JsonMachine::fromFile($jsonFile);
-            foreach ($jsonStream as $city) {
-                if (strtolower($city['name']) === strtolower($cityName)) {
-                    $arrLocalCity = $city;
+        if (is_string($cityName) && !empty($cityName)) {
+            $cityName = $this->treatCityName($cityName);
+            $arrLocalCity = [];
+            $jsonFile = 'data/city.list.json';
+            if (file_exists($jsonFile)) {
+                $jsonStream = JsonMachine::fromFile($jsonFile);
+                foreach ($jsonStream as $city) {
+                    if (strtolower($city['name']) === strtolower($cityName)) {
+                        $arrLocalCity = $city;
+                    }
                 }
             }
+            return $arrLocalCity;
         }
-        return $arrLocalCity;
+        throw new \Exception('No city passed to get data');
     }
 
     /**
@@ -99,18 +97,17 @@ class OpenWeatherService
      */
     public function getWeatherFromApi($cityId)
     {
-        $filemock = 'data/mock.weather.json';
+        /*$filemock = 'data/mock.weather.json';
         if (file_exists($filemock)) {
             return $this->getMockCity($filemock);
-        }
-        die('234');
+        }*/
         $arrQuery = [
             'query' => [
                 'id' => $cityId,
                 'appid' => self::API_KEY
             ]
         ];
-        $response = $this->client->request('GET', '/data/2.5/forecast', $arrQuery);
+        $response = $this->client->request('GET', '/data/2.5/weather', $arrQuery);
         return json_decode($response->getBody());
     }
 
@@ -142,8 +139,11 @@ class OpenWeatherService
     public function getOverAll($weatherData)
     {
         $weather = new \stdClass();
-        $weather->desc = $weatherData->list[0]->weather[0]->description;
-        $weather->humidity = $weatherData->list[0]->main->humidity;
+        foreach ($weatherData->weather as $key => $desc) {
+            $weather->desc[$key] = $desc->main;
+        }
+        $weather->desc = implode(', ', $weather->desc);
+        $weather->humidity = $weatherData->main->humidity;
         return $weather;
     }
 }

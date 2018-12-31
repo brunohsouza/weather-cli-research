@@ -1,25 +1,37 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: brunosouza
- * Date: 25/12/18
- * Time: 18:56
- */
 
 namespace Weather\Core;
 
-include_once 'IRequest.php';
-
 use Weather\Core\IRequest;
 
-class Request implements \Weather\Core\IRequest
+/**
+ * Class Request
+ * @package Weather\Core
+ */
+class Request implements IRequest
 {
+    /**
+     * HTTP method from the request
+     * @var string
+     */
     private $method;
 
+    /**
+     * Path from the request
+     * @var string
+     */
     private $path;
 
+    /**
+     * Determined Id from the path data passed from request
+     * @var integer
+     */
     private $id;
 
+    /**
+     * Parameters passed inside the request
+     * @var array
+     */
     private $params;
 
     /**
@@ -41,6 +53,7 @@ class Request implements \Weather\Core\IRequest
     }
 
     /**
+     * Gets the content inside the request
      * @return array
      */
     public function getBody()
@@ -53,6 +66,7 @@ class Request implements \Weather\Core\IRequest
     }
 
     /**
+     * Gets the id inside request and stores in id var
      * @return mixed
      * @throws \Exception
      */
@@ -62,6 +76,7 @@ class Request implements \Weather\Core\IRequest
     }
 
     /**
+     * Gets the method http passed in request
      * @return mixed
      */
     public function getMethod()
@@ -69,12 +84,17 @@ class Request implements \Weather\Core\IRequest
         return $this->method;
     }
 
+    /**
+     * Gets the path data and stores in path local var
+     * @param $path
+     */
     public function setPath($path)
     {
         $this->path = $path[1] ?? 'weather';
     }
 
     /**
+     * Returns the path passed inside request
      * @return string
      */
     public function getPath() :string
@@ -83,6 +103,7 @@ class Request implements \Weather\Core\IRequest
     }
 
     /**
+     * Gets the parameters passed inside the request and stores in params var
      * @param $request
      */
     public function setParams($request)
@@ -99,6 +120,7 @@ class Request implements \Weather\Core\IRequest
     }
 
     /**
+     * Return the parameters passed inside request
      * @return mixed
      */
     public function getParams()
