@@ -56,7 +56,7 @@ class Request implements IRequest
      * Gets the content inside the request
      * @return array
      */
-    public function getBody()
+    public function getBody() :array
     {
         $result = [];
         foreach ($_POST as $key => $value) {
@@ -67,10 +67,10 @@ class Request implements IRequest
 
     /**
      * Gets the id inside request and stores in id var
+     * @param $request
      * @return mixed
-     * @throws \Exception
      */
-    public function setId($request)
+    public function setId($request) :void
     {
         $this->id = $request[3] ?? null;
     }
@@ -88,7 +88,7 @@ class Request implements IRequest
      * Gets the path data and stores in path local var
      * @param $path
      */
-    public function setPath($path)
+    public function setPath($path) :void
     {
         $this->path = $path[1] ?? 'weather';
     }
@@ -106,7 +106,7 @@ class Request implements IRequest
      * Gets the parameters passed inside the request and stores in params var
      * @param $request
      */
-    public function setParams($request)
+    public function setParams($request) :void
     {
         $this->params = new \stdClass();
         if ($this->method === 'POST' || $this->method === 'PUT') {

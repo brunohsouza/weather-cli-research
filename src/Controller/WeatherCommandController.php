@@ -58,7 +58,7 @@ class WeatherCommandController extends Command
      * Execute the actions used in console
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|\stdClass|string
+     * @return string|void
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output)

@@ -59,7 +59,7 @@ class WeatherService
             $weather->overall = $this->getOverAll($weatherData);
             return $weather;
         }
-        throw new \Exception('Please, type a city name to get the weather information');
+        throw new \InvalidArgumentException('Please, type a city name to get the weather information');
     }
 
     /**
@@ -86,7 +86,7 @@ class WeatherService
             }
             return $arrLocalCity;
         }
-        throw new \Exception('No city passed to get data');
+        throw new \InvalidArgumentException('No city passed to get data');
     }
 
     /**
@@ -112,19 +112,9 @@ class WeatherService
      * @param string $cityName
      * @return string
      */
-    public function treatCityName(string $cityName)
+    public function treatCityName(string $cityName) :string
     {
         return urldecode(strtolower($cityName));
-    }
-
-    /**
-     * If there is an information about the city requested in a file, this function returns this file data
-     * @param $filemock
-     * @return mixed
-     */
-    public function getMockCity($filemock) :object
-    {
-        return json_decode(file_get_contents($filemock));
     }
 
     /**
@@ -132,7 +122,7 @@ class WeatherService
      * @param $weatherData
      * @return \stdClass
      */
-    public function getOverAll($weatherData)
+    public function getOverAll($weatherData) :\stdClass
     {
         $weather = new \stdClass();
         foreach ($weatherData->weather as $key => $desc) {

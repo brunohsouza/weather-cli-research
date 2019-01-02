@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: brunosouza
- * Date: 25/12/18
- * Time: 18:57
- */
 
 namespace Weather\Core;
 
@@ -25,7 +19,7 @@ class Router
      * Array that stores the available method that can be used in this app
      * @var array
      */
-    private $httpMethods = ['GET', 'POST', 'PUT', 'DELETE'];
+    private const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
     /**
      * Route passed inside the request
@@ -53,7 +47,7 @@ class Router
      * Method responsible to get all callable functions request and manage this
      * @param $name
      * @param $arguments
-     * @return \Exception
+     * @return mixed|string
      * @throws \Exception
      */
     public function __call($name, $arguments)
@@ -64,7 +58,7 @@ class Router
             $this->route = $this->formatRoute($route);
             return $this->run();
         } catch (\Error $exception) {
-            return new \Exception($exception->getMessage());
+            return $exception->getMessage();
         }
     }
 
@@ -99,8 +93,8 @@ class Router
                 }
             }
         }
-        if (!isset($class) || !isset($action)) {
-            throw new \Exception('Not Found', 404);
+        if (!isset($class, $action)) {
+            throw new \RuntimeException('Not Found', 404);
         }
         $controller = new $class();
         return $controller->$action($this->request->getParams());
@@ -109,12 +103,14 @@ class Router
     /**
      * Gets the config from route config file
      * @return mixed
+     * @throws \Exception
      */
-    public function getRouteConfig()
+    public function getRouteConfig() :array
     {
         if (file_exists('src/Config/routes.json')) {
             return json_decode(file_get_contents('src/Config/routes.json'), true);
         }
+        throw new \InvalidArgumentException('Could not find the route file');
     }
 
     /**
@@ -124,8 +120,8 @@ class Router
      */
     public function verityMethod($method) :void
     {
-        if (!in_array(strtoupper($method), $this->httpMethods, true)) {
-            throw new \Exception('Method not available');
+        if (!in_array(strtoupper($method), self::HTTP_METHODS, true)) {
+            throw new \RuntimeException('Method not available');
         }
     }
 
@@ -137,5 +133,4 @@ class Router
         $namespace = explode('\\', __NAMESPACE__);
         $this->appName = $namespace[0];
     }
-
 }

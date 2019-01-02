@@ -25,7 +25,7 @@ class TemperatureService
             $temp->max = $this->kelvinToCelsius($dataTemp->temp_max);
             return $temp;
         }
-        throw new \Exception('No data passed to get the temperature');
+        throw new \InvalidArgumentException('No data passed to get the temperature');
     }
 
     /**

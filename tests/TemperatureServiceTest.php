@@ -61,7 +61,7 @@ class TemperatureServiceTest extends TestCase
     }
 
     /**
-     * Tests the convertion from Farhenreit to Celsius
+     * Tests the conversion from Fahrenheit to Celsius
      * @group fah
      */
     public function testFahrenheitToCelsius() :void
@@ -74,7 +74,7 @@ class TemperatureServiceTest extends TestCase
     }
 
     /**
-     * Tests the convertion from Kelvin to Celsius
+     * Tests the conversion from Kelvin to Celsius
      * @group kelvin
      */
     public function testKelvinToCelsius() :void

@@ -53,7 +53,7 @@ Type the name of the city that you are interested to know about the weather as f
 Type a name of a city that you want to know the weather: Berlin
 ```
 
-The application will prints the answer with the weather and relevant informations like:
+The application will prints the answer with the weather and relevant information like:
 
 ```
 Clear,  Temperature in 4.32 degrees Celsius
@@ -77,7 +77,7 @@ The API must show the response in JSON format, with the weather data from the ci
 {"temp":{"realtime":8.62,"min":7.8,"max":9.4},"overall":{"desc":"Haze","humidity":68}}
 ```
  
-The "temp" key has the temperature data with the realtime temperature, the minimun and the maximun temperature forecasts.
+The "temp" key has the temperature data with the real time temperature, the minimum and the maximum temperature forecasts.
 
 The "overall" key has the relevant information of the weather as description (Clear sky, Haze, Mist, etc) and 
 humidity in percents. 
@@ -94,7 +94,7 @@ This application has the following dependencies:
         
 *Symfony console is a friendly, easier and elegant way to work with console mode on php applications.
 
-*Guzzle is an excelent tool to work with request to API's. It has a secure response treatment and friendly requests.
+*Guzzle is an excellent tool to work with request to API's. It has a secure response treatment and friendly requests.
 
 *Halaxa/json-machine is a tool to work with json objects. It has some functionalities that can turn the work easier, 
 specially with big json files. IN this project it was used to makes a JSON parser from the file that has the id's of the 
