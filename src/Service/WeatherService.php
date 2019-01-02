@@ -97,10 +97,6 @@ class WeatherService
      */
     public function getWeatherFromApi($cityId)
     {
-        /*$filemock = 'data/mock.weather.json';
-        if (file_exists($filemock)) {
-            return $this->getMockCity($filemock);
-        }*/
         $arrQuery = [
             'query' => [
                 'id' => $cityId,
