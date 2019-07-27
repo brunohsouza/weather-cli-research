@@ -1,1 +1,10 @@
 WeatherService
+ [x] Get weather by city
+ [x] Get weather by city without params
+ [x] Weather city data
+ [x] Weather city data without params
+ [x] Get weather from api
+ [x] Treat city name
+ [x] Get overall
+
+TemperatureService

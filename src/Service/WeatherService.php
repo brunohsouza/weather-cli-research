@@ -95,7 +95,7 @@ class WeatherService
         $arrQuery = [
             'query' => [
                 'id' => $cityId,
-                'appid' => 'aba6f8292eed9fbc0ff3692d478902fa'
+                'appid' => $_ENV['API_WEATHER_KEY']
             ]
         ];
         $response = $this->client->request('GET', '/data/2.5/weather', $arrQuery);

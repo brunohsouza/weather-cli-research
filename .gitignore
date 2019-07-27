@@ -17,3 +17,4 @@ gen
 /vendor/psr/
 data/.Rhistory
 /.env
+/tests/_reports/
