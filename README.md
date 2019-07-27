@@ -1,3 +1,7 @@
+
+# weather-cli-research
+A study case to build an application that consumes an API to show the weather in a specific city by a command line.
+
 This application has the goal to query weather from determined cities.
 
 The structure of this application is based as the following map:
@@ -144,7 +148,7 @@ The Service layer has the classes based on the business rules of the application
 responsible to treat the temperature data and makes some conversion like Kelvin to Celsius or Fahrenheit to Celsius.
 The WeatherService has the responsible to get the weather data by city and makes the requisition to Open Weather Map Api.
 
-**tests**
+**Tests**
 
 This directory has the unit tests based on the service classes. To run the tests execute this command on the 
 application's root folder in a terminal:
