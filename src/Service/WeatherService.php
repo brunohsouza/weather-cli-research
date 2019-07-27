@@ -14,11 +14,6 @@ class WeatherService
 {
 
     /**
-     * Key necessary to consume the OpenWeatherAPI
-     */
-    private const API_KEY = '6723df6a02149f85e517ad8d4836c748';
-
-    /**
      * Service to get and treat the temperature as Celsius
      * @var TemperatureService
      */
@@ -100,7 +95,7 @@ class WeatherService
         $arrQuery = [
             'query' => [
                 'id' => $cityId,
-                'appid' => self::API_KEY
+                'appid' => 'aba6f8292eed9fbc0ff3692d478902fa'
             ]
         ];
         $response = $this->client->request('GET', '/data/2.5/weather', $arrQuery);

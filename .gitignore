@@ -16,3 +16,4 @@ gen
 /vendor/ralouphie/
 /vendor/psr/
 data/.Rhistory
+/.env

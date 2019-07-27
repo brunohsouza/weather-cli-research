@@ -4,6 +4,7 @@ namespace Test;
 
 use PHPUnit\Framework\TestCase;
 use Weather\Service\WeatherService;
+use Symfony\Component\Dotenv\Dotenv;
 
 class WeatherServiceTest extends TestCase
 {
@@ -16,6 +17,8 @@ class WeatherServiceTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         $this->weatherService = new WeatherService();
+        $dotenv = new Dotenv();
+        $dotenv->loadEnv('.env');
     }
 
     /**
